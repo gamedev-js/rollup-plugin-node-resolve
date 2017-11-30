@@ -1,4 +1,4 @@
-import { dirname, resolve, normalize, sep } from 'path';
+import { join, dirname, resolve, normalize, sep } from 'path';
 import builtins from 'builtin-modules';
 import _nodeResolve from 'resolve';
 import browserResolve from 'browser-resolve';
@@ -10,6 +10,7 @@ const ES6_BROWSER_EMPTY = resolve( __dirname, '../src/empty.js' );
 const CONSOLE_WARN = ( ...args ) => console.warn( ...args ); // eslint-disable-line no-console
 
 export default function nodeResolve ( options = {} ) {
+	const root = options.root;
 	const useModule = options.module !== false;
 	const useMain = options.main !== false;
 	const useJsnext = options.jsnext === true;
@@ -40,6 +41,11 @@ export default function nodeResolve ( options = {} ) {
 
 			const parts = importee.split( /[\/\\]/ );
 			let id = parts.shift();
+			let searchInRoot = !!root;
+
+			if (options.browser) {
+				searchInRoot = false;
+			}
 
 			if ( id[0] === '@' && parts.length ) {
 				// scoped packages
@@ -47,6 +53,8 @@ export default function nodeResolve ( options = {} ) {
 			} else if ( id[0] === '.' ) {
 				// an import relative to the parent dir of the importer
 				id = resolve( importer, '..', importee );
+
+				searchInRoot = false;
 			}
 
 			return new Promise( ( fulfil, reject ) => {
@@ -55,7 +63,8 @@ export default function nodeResolve ( options = {} ) {
 				resolveId(
 					importee,
 					Object.assign({
-						basedir: dirname( importer ),
+						// basedir: dirname( importer ),
+						basedir: searchInRoot ? join(options.root, 'node_modules') : dirname( importer ),
 						packageFilter ( pkg ) {
 							if ( useModule && pkg[ 'module' ] ) {
 								pkg[ 'main' ] = pkg[ 'module' ];

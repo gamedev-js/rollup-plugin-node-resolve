@@ -383,4 +383,32 @@ describe( 'rollup-plugin-node-resolve', function () {
 			assert.deepEqual( bundle.imports, [ 'foo/deep' ] );
 		});
 	});
+
+	it( 'without root options', () => {
+		return rollup.rollup({
+			entry: 'samples/root/main.js',
+			plugins: [ nodeResolve({
+				// root: path.join(__dirname, 'samples/root/'),
+			}) ]
+		}).then( bundle => {
+			assert.equal(
+				bundle.modules[0].id,
+				path.resolve( __dirname, 'samples/root/node_modules/foo/node_modules/bar/index.js' )
+			);
+		});
+	});
+
+	it( 'with root options', () => {
+		return rollup.rollup({
+			entry: 'samples/root/main.js',
+			plugins: [ nodeResolve({
+				root: path.join(__dirname, 'samples/root/'),
+			}) ]
+		}).then( bundle => {
+			assert.equal(
+				bundle.modules[0].id,
+				path.resolve( __dirname, 'samples/root/node_modules/bar/index.js' )
+			);
+		});
+	});
 });
