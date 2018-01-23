@@ -7,9 +7,10 @@
     "es5-ext": "^0.10.11",
     "eslint": "^3.18.0",
     "mocha": "^3.0.2",
-    "rollup": "^0.41.6",
-    "rollup-plugin-buble": "^0.15.0",
+    "rollup": "^0.54.1",
+    "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.2",
     "string-capitalize": "^1.0.1",
     "vlq": "^0.2.1"
   },
